@@ -15,12 +15,14 @@ if (process.env.NODE_ENV !== 'development') {
 }
 
 const menubar = new MenuBar({
-  height: 400,
-  width: 300,
-  minHeight: 400,
-  minWidth: 300,
-  maxHeight: 400,
-  maxWidth: 300,
+  height: 800,
+  width: 1000,
+  // height: 400,
+  // width: 300,
+  // minHeight: 400,
+  // minWidth: 300,
+  // maxHeight: 400,
+  // maxWidth: 300,
   preloadWindow: true,
   alwaysOnTop: false,
   icon: path.join(__dirname, './cat.png')

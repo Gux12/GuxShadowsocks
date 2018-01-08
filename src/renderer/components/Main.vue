@@ -12,7 +12,7 @@
                 @change="restartSS">
         </mt-radio>
         <mt-cell title="是否全局代理">
-            <mt-switch v-model="isGlobal"></mt-switch>
+            <mt-switch v-model="isGlobal" @change="restartSS"></mt-switch>
         </mt-cell>
         <mt-button class='proxy-button' :type='isProxyStart ? "danger":"primary" ' size='large'
                    @click='toggleProxy'>
@@ -54,8 +54,13 @@
       toggleProxy () {
         if (!this.isProxyStart) {
           networksetup.removeAll()
+          let ls
+          if (require('os').platform() === 'win32') {
+            ls = this.isGlobal ? cp.spawn(require('path').join(__dirname, '../utils/sysproxy.exe'), ['global', `127.0.0.1:${LOCAL_PORT}`, 'localhost;127.*;10.*;172.16.*;172.17.*;172.18.*;172.19.*;172.20.*;172.21.*;172.22.*;172.23.*;172.24.*;172.25.*;172.26.*;172.27.*;172.28.*;172.29.*;172.30.*;172.31.*;172.32.*;192.168.*']) : cp.spawn(require('path').join(__dirname, '../utils/sysproxy.exe'), ['pac', `http://127.0.0.1:${LOCAL_PORT}/pac`])
+          } else if (require('os').platform() === 'darwin') {
+            ls = cp.spawn('networksetup', ['-setsocksfirewallproxy', 'wi-fi', '127.0.0.1', LOCAL_PORT, 'off'])
+          }
 
-          let ls = cp.spawn('networksetup', ['-setsocksfirewallproxy', 'wi-fi', '127.0.0.1', '1086', 'off'])
           ls.stdout.on('data', (data) => {
             console.log(`stdout: ${data}`)
           })
@@ -84,7 +89,12 @@
         if (this.isProxyStart) {
           this.stopSS(this.ssLocal, () => {
             networksetup.removeAll()
-            let code = cp.spawnSync('networksetup', ['-setsocksfirewallproxy', 'wi-fi', '127.0.0.1', '1086', 'off'])
+            let code
+            if (require('os').platform() === 'win32') {
+              code = this.isGlobal ? cp.spawnSync(require('path').resolve(__dirname, '../utils/sysproxy.exe'), ['global', `127.0.0.1:${LOCAL_PORT}`, 'localhost;127.*;10.*;172.16.*;172.17.*;172.18.*;172.19.*;172.20.*;172.21.*;172.22.*;172.23.*;172.24.*;172.25.*;172.26.*;172.27.*;172.28.*;172.29.*;172.30.*;172.31.*;172.32.*;192.168.*']) : cp.spawn(require('path').join(__dirname, '../utils/sysproxy.exe'), ['pac', `http://127.0.0.1:${LOCAL_PORT}/pac`])
+            } else if (require('os').platform() === 'darwin') {
+              code = cp.spawnSync('networksetup', ['-setsocksfirewallproxy', 'wi-fi', '127.0.0.1', LOCAL_PORT, 'off'])
+            }
             console.log(`child process exited with code ${code}`)
             this.ssLocal = ss.createClient(this.ssConfig, true)
           })
@@ -148,7 +158,7 @@
           localAddr: '127.0.0.1',
           localPort: LOCAL_PORT,
           password: this.accounts[0].password,
-          pacServerPort: 8090,
+          pacServerPort: LOCAL_PORT,
           timeout: 300,
           method: this.server2Use.method,
           level: 'warn',

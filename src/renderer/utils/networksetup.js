@@ -2,14 +2,19 @@ let cp = require('child_process')
 export default {
   removeAll: function () {
     try {
-      cp.execSync('networksetup -setftpproxystate wi-fi off')
-      cp.execSync('networksetup -setwebproxystate wi-fi off')
-      cp.execSync('networksetup -setsecurewebproxystate wi-fi off')
-      cp.execSync('networksetup -setstreamingproxystate wi-fi off')
-      cp.execSync('networksetup -setgopherproxystate wi-fi off')
-      cp.execSync('networksetup -setsocksfirewallproxystate wi-fi off')
-      cp.execSync('networksetup -setproxyautodiscovery wi-fi off')
-      cp.execSync('networksetup -setautoproxystate wi-fi off')
+      if (require('os').platform() === 'darwin') {
+        cp.execSync('networksetup -setftpproxystate wi-fi off')
+        cp.execSync('networksetup -setwebproxystate wi-fi off')
+        cp.execSync('networksetup -setsecurewebproxystate wi-fi off')
+        cp.execSync('networksetup -setstreamingproxystate wi-fi off')
+        cp.execSync('networksetup -setgopherproxystate wi-fi off')
+        cp.execSync('networksetup -setsocksfirewallproxystate wi-fi off')
+        cp.execSync('networksetup -setproxyautodiscovery wi-fi off')
+        cp.execSync('networksetup -setautoproxystate wi-fi off')
+      } else if (require('os').platform() === 'win32') {
+        console.log(require('path').join(__dirname, './sysproxy.exe'))
+        cp.spawnSync(require('path').join(__dirname, './sysproxy.exe'), ['pac', ''])
+      }
     } catch (e) {
       console.error(e)
     }
