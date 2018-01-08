@@ -1,19 +1,23 @@
-let cp = require('child_process')
+// let Sudoer = require('electron-sudo').default
+// let options = {name: 'Guxb(￣▽￣)d'}
+// let sudoer = new Sudoer(options)
+// console.log(sudoer)
+let sudoer = require('child_process')
 export default {
-  removeAll: function () {
+  removeAll: async function () {
     try {
       if (require('os').platform() === 'darwin') {
-        cp.execSync('networksetup -setftpproxystate wi-fi off')
-        cp.execSync('networksetup -setwebproxystate wi-fi off')
-        cp.execSync('networksetup -setsecurewebproxystate wi-fi off')
-        cp.execSync('networksetup -setstreamingproxystate wi-fi off')
-        cp.execSync('networksetup -setgopherproxystate wi-fi off')
-        cp.execSync('networksetup -setsocksfirewallproxystate wi-fi off')
-        cp.execSync('networksetup -setproxyautodiscovery wi-fi off')
-        cp.execSync('networksetup -setautoproxystate wi-fi off')
+        await sudoer.exec('./networksetup2 -setftpproxystate wi-fi off')
+        await sudoer.exec('./networksetup2 -setwebproxystate wi-fi off')
+        await sudoer.exec('./networksetup2 -setsecurewebproxystate wi-fi off')
+        await sudoer.exec('./networksetup2 -setstreamingproxystate wi-fi off')
+        await sudoer.exec('./networksetup2 -setgopherproxystate wi-fi off')
+        await sudoer.exec('./networksetup2 -setsocksfirewallproxystate wi-fi off')
+        await sudoer.exec('./networksetup2 -setproxyautodiscovery wi-fi off')
+        await sudoer.exec('./networksetup2 -setautoproxystate wi-fi off')
       } else if (require('os').platform() === 'win32') {
         console.log(require('path').join(__dirname, './sysproxy.exe'))
-        cp.spawnSync(require('path').join(__dirname, './sysproxy.exe'), ['pac', ''])
+        await sudoer.spawnSync(require('path').join(__dirname, './sysproxy.exe'), ['pac', ''])
       }
     } catch (e) {
       console.error(e)
@@ -21,14 +25,14 @@ export default {
   },
   proxyState: function () {
     try {
-      let ftpProxy = cp.execSync('networksetup -getftpproxy wi-fi').toString()
-      let webProxy = cp.execSync('networksetup -getwebproxy wi-fi').toString()
-      let securewebProxy = cp.execSync('networksetup -getsecurewebproxy wi-fi').toString()
-      let streamingProxy = cp.execSync('networksetup -getstreamingproxy wi-fi').toString()
-      let gopherProxy = cp.execSync('networksetup -getgopherproxy wi-fi').toString()
-      let socksfirewallProxy = cp.execSync('networksetup -getsocksfirewallproxy wi-fi').toString()
-      // let proxyautodiscovery = cp.execSync('networksetup -getproxyautodiscovery wi-fi').toString()
-      let autoProxy = cp.execSync('networksetup -getautoproxyurl wi-fi').toString()
+      let ftpProxy = sudoer.exec('./networksetup2 -getftpproxy wi-fi').toString()
+      let webProxy = sudoer.exec('./networksetup2 -getwebproxy wi-fi').toString()
+      let securewebProxy = sudoer.exec('./networksetup2 -getsecurewebproxy wi-fi').toString()
+      let streamingProxy = sudoer.exec('./networksetup2 -getstreamingproxy wi-fi').toString()
+      let gopherProxy = sudoer.exec('./networksetup2 -getgopherproxy wi-fi').toString()
+      let socksfirewallProxy = sudoer.exec('./networksetup2 -getsocksfirewallproxy wi-fi').toString()
+      // let proxyautodiscovery = sudoer.exec('./networksetup2 -getproxyautodiscovery wi-fi').toString()
+      let autoProxy = sudoer.exec('./networksetup2 -getautoproxyurl wi-fi').toString()
       return {
         ftpproxy: !ftpProxy.match('No'),
         webproxy: !webProxy.match('No'),

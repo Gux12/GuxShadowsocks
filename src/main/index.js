@@ -15,14 +15,14 @@ if (process.env.NODE_ENV !== 'development') {
 }
 
 const menubar = new MenuBar({
-  height: 800,
-  width: 1000,
-  // height: 400,
-  // width: 300,
-  // minHeight: 400,
-  // minWidth: 300,
-  // maxHeight: 400,
-  // maxWidth: 300,
+  // height: 800,
+  // width: 1000,
+  height: 400,
+  width: 300,
+  minHeight: 400,
+  minWidth: 300,
+  maxHeight: 400,
+  maxWidth: 300,
   preloadWindow: true,
   alwaysOnTop: false,
   icon: path.join(__dirname, './cat.png')
@@ -69,10 +69,10 @@ const winURL = process.env.NODE_ENV === 'development'
 //     createWindow()
 //   }
 // })
-menubar.on('ready', function () {
+menubar.on('ready', async function () {
   console.log('app is ready')
   // your app code here
-  networksetup.removeAll()
+  await networksetup.removeAll()
   let menu = Menu.buildFromTemplate([{
     label: '编辑',
     submenu: [{
@@ -112,8 +112,8 @@ menubar.on('ready', function () {
 menubar.on('after-create-window', function () {
   mainWindow = menubar.window
   mainWindow.loadURL(winURL)
-  mainWindow.on('closed', () => {
-    networksetup.removeAll()
+  mainWindow.on('closed', async () => {
+    await networksetup.removeAll()
     mainWindow = null
   })
   // menubar.tray.setImage(path.join(__dirname, './cat.png'))
